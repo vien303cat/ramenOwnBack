@@ -3,6 +3,8 @@ import express from 'express'
 import mongoose from 'mongoose'
 import { StatusCodes } from 'http-status-codes'
 import routerUser from './routers/user.js'
+// 這個import會直接執行
+import './passport.js'
 
 mongoose
   .connect(process.env.DB_URL)
