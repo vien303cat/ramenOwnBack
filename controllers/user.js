@@ -57,3 +57,14 @@ export const login = async (req, res) => {
     })
   }
 }
+
+export const profile = async (req, res) => {
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: '',
+    result: {
+      account: req.user.account,
+      permission: req.user.permission,
+    },
+  })
+}

@@ -47,20 +47,24 @@ const schema = new Schema(
       default: [],
     },
     name: {
-      type: [String],
+      type: String,
       description: '暱稱',
       required: [true, '暱稱必填'],
       minlength: [1, '暱稱長度過短'],
-      maxlength: [10, '帳號長度過短'],
+      maxlength: [10, '帳號長度過長'],
       unique: true,
     },
     permission: {
-      type: [Number],
+      type: Number,
       description: '權限:0-會員,1-管理員,99-超級管理員',
+      enum: {
+        value: [0, 1, 99],
+        message: '權限錯誤',
+      },
       default: UserPermission.USER,
     },
     ishidden: {
-      type: [Boolean],
+      type: Boolean,
       description: '是否刪除:0-未刪除,1-已刪除',
       default: false,
     },

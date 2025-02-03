@@ -2,6 +2,7 @@ import passport from 'passport'
 import passportLocal from 'passport-local'
 import User from './models/user.js'
 import bcrypt from 'bcrypt'
+import passportJWT from 'passport-jwt'
 
 // 引用passportLocal 驗證策略
 // 編寫 login 驗證方式
@@ -30,6 +31,51 @@ passport.use(
           return done(null, null, { message: '未找到使用者' })
         } else if (error.message === 'PASSWORD') {
           return done(null, null, { message: '密碼不正確' })
+        } else {
+          return done(null, null, { message: '伺服器錯誤' })
+        }
+      }
+    },
+  ),
+)
+
+// 引用passportJWT 驗證策略
+// 編寫jwt 驗證方式
+passport.use(
+  'jwt',
+  new passportJWT.Strategy(
+    {
+      // jwt從哪裡取得
+      jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // jwt的secret
+      secretOrKey: process.env.JWT_SECRET,
+      //  讓後面的function可以取得req
+      passReqToCallback: true,
+    },
+    // req = 請求資訊, 有設定 passReqToCallback 才能用
+    // plyload = jwt解碼後的資料
+    // done = 完成後執行的function
+    async (req, payload, done) => {
+      try {
+        // 自己取的原始的jwt方法
+        // const token = req.headers.authorization.split(' ')[1]
+
+        // 因為沒有提供原始的jwt , 所以利用套件語法取得
+        const token = passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken()(req)
+        // 用解碼的資料查詢有沒有這個使用者
+        const user = await User.findById(payload._id).orFail(new Error('USER'))
+        // 找到使用者後,檢查資料庫有沒有這個jwt
+        if (!user.tokens.includes(token)) {
+          throw new Error('TOKEN')
+        }
+        // 都沒問題,下一步
+        return done(null, { user, token }, null)
+      } catch (error) {
+        console.log(error)
+        if (error.message === 'USER') {
+          return done(null, null, { message: '未找到使用者' })
+        } else if (error.message === 'TOKEN') {
+          return done(null, null, { message: '找不到TOKEN' })
         } else {
           return done(null, null, { message: '伺服器錯誤' })
         }
