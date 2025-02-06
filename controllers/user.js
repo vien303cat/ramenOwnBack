@@ -1,6 +1,7 @@
 import User from '../models/user.js'
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
+import UserPermission from '../enums/UserPermission.js'
 
 export const create = async (req, res) => {
   try {
@@ -39,6 +40,7 @@ export const login = async (req, res) => {
     // jwt.sign(儲存資料,secret,設定)
     const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
     req.user.tokens.push(token)
+    console.log(req)
     await req.user.save()
     res.status(StatusCodes.OK).json({
       success: true,
@@ -46,6 +48,7 @@ export const login = async (req, res) => {
       result: {
         token,
         account: req.user.account,
+        name: req.user.name,
         permission: req.user.permission,
       },
     })
@@ -53,7 +56,7 @@ export const login = async (req, res) => {
     console.log(error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: '伺服器錯誤',
+      message: '帳號或密碼錯誤',
     })
   }
 }
