@@ -67,6 +67,7 @@ export const profile = async (req, res) => {
     message: '',
     result: {
       account: req.user.account,
+      name: req.user.name,
       permission: req.user.permission,
     },
   })
