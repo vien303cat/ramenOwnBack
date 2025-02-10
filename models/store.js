@@ -42,4 +42,4 @@ const schema = new Schema(
   },
 )
 
-export default model('store', schema)
+export default model('stores', schema)
