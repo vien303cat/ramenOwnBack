@@ -1,6 +1,7 @@
 import passport from 'passport'
 import { StatusCodes } from 'http-status-codes'
 import jsonwebtoken from 'jsonwebtoken'
+import UserPermission from '../enums/UserPermission.js'
 
 export const login = (req, res, next) => {
   // session: false 停用cookie
@@ -53,4 +54,15 @@ export const jwt = (req, res, next) => {
     // 繼續下一步
     next()
   })(req, res, next)
+}
+
+export const admin = (req, res, next) => {
+  console.log(req.user)
+  if (req.user.permission !== UserPermission.ADMIN) {
+    return res.status(StatusCodes.FORBIDDEN).json({
+      success: false,
+      message: '沒有權限',
+    })
+  }
+  next()
 }

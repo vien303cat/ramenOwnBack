@@ -12,7 +12,7 @@ export const create = async (req, res) => {
       result: user,
     })
   } catch (error) {
-    console.log(error)
+    console.log('controller product create:', error)
     if (error.name === 'MongoServerError' && error.code === 11000) {
       res.status(StatusCodes.CONFLICT).json({
         success: false,
@@ -35,7 +35,7 @@ export const create = async (req, res) => {
 
 export const get = async (req, res) => {
   try {
-    const result = await Store.find({ ishidden: true })
+    const result = await Store.find({ ishidden: false })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -59,7 +59,7 @@ export const getAll = async (req, res) => {
       result,
     })
   } catch (error) {
-    console.log(error)
+    console.log('controller product getAll:', error)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'serverError',
@@ -77,7 +77,7 @@ export const getId = async (req, res) => {
       result,
     })
   } catch (error) {
-    console.log(error)
+    console.log('controller product getId:', error)
     if (error.name === 'CastError' || error.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
@@ -113,7 +113,7 @@ export const edit = async (req, res) => {
       result,
     })
   } catch (error) {
-    console.log(error)
+    console.log('controller product edit:', error)
     if (error.name === 'CastError' || error.message === 'ID') {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,

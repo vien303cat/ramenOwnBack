@@ -1,8 +1,6 @@
 import User from '../models/user.js'
-import store from '../models/store.js'
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
-import UserPermission from '../enums/UserPermission.js'
 
 export const create = async (req, res) => {
   try {
