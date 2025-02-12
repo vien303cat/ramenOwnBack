@@ -4,12 +4,13 @@ import validator from 'validator'
 
 export const create = async (req, res) => {
   try {
-    const user = await Store.create(req.body)
+    req.body.image = req.file?.path || ''
+    const result = await Store.create(req.body)
 
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
-      result: user,
+      result: result,
     })
   } catch (error) {
     console.log('controller product create:', error)
