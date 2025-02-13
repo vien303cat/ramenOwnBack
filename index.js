@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import { StatusCodes } from 'http-status-codes'
 import routerUser from './routers/user.js'
 import routerStore from './routers/store.js'
+import routerScore from './routers/score.js'
 
 import cors from 'cors'
 
@@ -54,6 +55,7 @@ app.use((error, req, res, next) => {
 
 app.use('/user', routerUser)
 app.use('/store', routerStore)
+app.use('/score', routerScore)
 
 app.listen(process.env.PORT || 4000, () => {
   console.log('伺服器啟動')
