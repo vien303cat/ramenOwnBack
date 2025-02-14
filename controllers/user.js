@@ -46,6 +46,7 @@ export const login = async (req, res) => {
       message: '',
       result: {
         token,
+        id: req.user._id,
         account: req.user.account,
         name: req.user.name,
         permission: req.user.permission,
@@ -68,6 +69,7 @@ export const profile = async (req, res) => {
       account: req.user.account,
       name: req.user.name,
       permission: req.user.permission,
+      id: req.user._id,
     },
   })
 }

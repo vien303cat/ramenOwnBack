@@ -11,7 +11,7 @@ router.get('/all', score.get)
 // 單店家評價
 router.get('/getstore/:id', score.getstore)
 // 單會員評價
-router.get('/getuser/:id', auth.jwt, auth.login, score.getuser)
+router.get('/getuser/:storeid/:userid', auth.jwt, auth.login, score.getuser)
 // 更改評價
 router.patch('/:id', auth.jwt, auth.login, upload, score.edit)
 // 刪除評價
