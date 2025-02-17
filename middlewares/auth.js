@@ -10,6 +10,7 @@ export const login = (req, res, next) => {
     if (!user || error) {
       // local驗證策略的錯誤,名稱固定
       if (info.message === 'Missing credentials') {
+        console.log('login error:', error, user, info)
         return res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
           message: 'requestFormatError',
