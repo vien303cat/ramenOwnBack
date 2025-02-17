@@ -13,7 +13,7 @@ router.get('/getstore/:storeid', score.getstore)
 // // 單會員評價
 router.get('/getuser/:storeid/:userid', auth.jwt, score.getuser)
 // // 更改評價
-router.patch('/:id', auth.jwt, auth.login, upload, score.edit)
+router.patch('/:id', auth.jwt, upload, score.edit)
 // // 刪除評價
 // router.delete('/:id', auth.jwt, auth.login, score.del)
 

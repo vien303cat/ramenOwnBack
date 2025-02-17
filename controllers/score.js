@@ -70,45 +70,35 @@ export const getuser = async (req, res) => {
     }
   }
 }
+
 export const getstore = async (req, res) => {
-  const getData = req.method === 'POST' ? req.body : req.query
-  console.log('getstoreDATA:', getData, req.params)
   try {
+    const getData = req.method === 'POST' ? req.body : req.query
+    console.log('getstoreDATA:', getData, req.params)
     if (!validator.isMongoId(req.params.storeid)) throw new Error('ID')
-    const result = await Score.find({
-      store: req.params.storeid,
-    }).orFail(new Error('NOT FOUND'))
+
+    const result = await Score.find({ store: req.params.storeid })
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
       result,
     })
   } catch (error) {
-    console.log(error)
-    if (error.name === 'CastError' || error.message === 'ID') {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'ID格式不符',
-      })
-    } else if (error.message === 'NOT FOUND') {
-      res.status(StatusCodes.NOT_FOUND).json({
-        success: false,
-        message: '',
-      })
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: 'serverError',
-      })
-    }
+    console.log('controller getstore :', error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
   }
 }
+
 export const edit = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
 
     req.body.image = req.file?.path
-    const result = await Store.findByIdAndUpdate(req.params.id, req.body, {
+    console.log('editDATA:', req.body)
+    const result = await Store.findByIdAndUpdate(req.params._id, req.body, {
       runValidators: true,
       new: true,
     }).orFail(new Error('NOT FOUND'))
