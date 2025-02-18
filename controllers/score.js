@@ -73,11 +73,13 @@ export const getuser = async (req, res) => {
 
 export const getstore = async (req, res) => {
   try {
-    const getData = req.method === 'POST' ? req.body : req.query
-    console.log('getstoreDATA:', getData, req.params)
+    // const getData = req.method === 'POST' ? req.body : req.query
+    console.log('getstoreDATA:', req.params)
     if (!validator.isMongoId(req.params.storeid)) throw new Error('ID')
 
-    const result = await Score.find({ store: req.params.storeid })
+    const result = await Score.find({ store: req.params.storeid }).populate('user', ['name'])
+    console.log('DATA:', result)
+
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -97,8 +99,8 @@ export const edit = async (req, res) => {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
 
     req.body.image = req.file?.path
-    console.log('editDATA:', req.body)
-    const result = await Store.findByIdAndUpdate(req.params._id, req.body, {
+    console.log('editDATA:', req.params.id)
+    const result = await Score.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
       new: true,
     }).orFail(new Error('NOT FOUND'))

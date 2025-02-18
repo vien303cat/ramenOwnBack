@@ -14,6 +14,7 @@ router.get('/getstore/:storeid', score.getstore)
 router.get('/getuser/:storeid/:userid', auth.jwt, score.getuser)
 // // 更改評價
 router.patch('/:id', auth.jwt, upload, score.edit)
+// TODO:
 // // 刪除評價
 // router.delete('/:id', auth.jwt, auth.login, score.del)
 
