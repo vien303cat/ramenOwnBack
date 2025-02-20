@@ -1,5 +1,4 @@
 import Score from '../models/score.js'
-import Store from '../models/store.js'
 import { StatusCodes } from 'http-status-codes'
 import validator from 'validator'
 
@@ -32,6 +31,26 @@ export const create = async (req, res) => {
         message: '未知錯誤',
       })
     }
+  }
+}
+
+export const getAll = async (req, res) => {
+  try {
+    const result = await Score.find()
+      .populate('user', ['account', 'name'])
+      .populate('store', ['name', 'image'])
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+    console.log('result:', result)
+  } catch (error) {
+    console.log('controller score getAll:', error)
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: 'serverError',
+    })
   }
 }
 
@@ -137,5 +156,34 @@ export const edit = async (req, res) => {
   }
 }
 
-export const get = async (req, res) => {}
-export const del = async (req, res) => {}
+export const del = async (req, res) => {
+  try {
+    if (!validator.isMongoId(req.params.id)) throw new Error('ID')
+    const result = await Score.findByIdAndDelete(req.params.id).orFail(new Error('NOT FOUND'))
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '刪除成功',
+      result,
+    })
+    console.log('刪除成功:', req.params.id)
+  } catch (error) {
+    console.log('controller score del:', error)
+    if (error.name === 'CastError' || error.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: '',
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}

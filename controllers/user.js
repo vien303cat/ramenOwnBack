@@ -1,10 +1,10 @@
 import User from '../models/user.js'
+import Score from '../models/score.js'
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
 
 export const create = async (req, res) => {
   try {
-    console.log(req.body)
     const user = await User.create(req.body)
 
     res.status(StatusCodes.OK).json({
@@ -39,7 +39,10 @@ export const login = async (req, res) => {
     // jwt.sign(儲存資料,secret,設定)
     const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
     req.user.tokens.push(token)
-    console.log(req)
+
+    // 查詢使用者所有評論數 .countDocuments
+    const scoresCnt = await Score.countDocuments({ user: req.user._id })
+
     await req.user.save()
     res.status(StatusCodes.OK).json({
       success: true,
@@ -50,6 +53,7 @@ export const login = async (req, res) => {
         account: req.user.account,
         name: req.user.name,
         permission: req.user.permission,
+        scorescnt: scoresCnt,
       },
     })
   } catch (error) {

@@ -36,7 +36,42 @@ export const create = async (req, res) => {
 
 export const get = async (req, res) => {
   try {
-    const result = await Store.find({ ishidden: false })
+    // mongodb aggregate 聚合
+    const result = await Store.aggregate([
+      {
+        $match: {
+          ishidden: false,
+        },
+      },
+      {
+        $lookup: {
+          localField: '_id',
+          from: 'scores',
+          foreignField: 'store',
+          as: 'scores',
+          pipeline: [
+            {
+              $project: {
+                star: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          totalScore: {
+            $sum: '$scores.star',
+          },
+          avgScore: {
+            $avg: '$scores.star',
+          },
+          scores: {
+            $size: '$scores',
+          },
+        },
+      },
+    ])
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
