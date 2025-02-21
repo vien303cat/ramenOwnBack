@@ -10,8 +10,10 @@ router.post('/', auth.jwt, upload, score.create)
 router.get('/all', auth.jwt, auth.admin, score.getAll)
 // // 單店家評價
 router.get('/getstore/:storeid', score.getstore)
-// // 單會員評價
+// // 單店家單會員評價
 router.get('/getuser/:storeid/:userid', auth.jwt, score.getuser)
+// // 單會員所有評價
+router.get('/getuserall/:userid', auth.jwt, score.getuserall)
 // // 更改評價
 router.patch('/:id', auth.jwt, upload, score.edit)
 // // 刪除評價

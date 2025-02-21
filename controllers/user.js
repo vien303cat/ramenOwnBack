@@ -66,6 +66,9 @@ export const login = async (req, res) => {
 }
 
 export const profile = async (req, res) => {
+  console.log('req.user:' + req.user)
+  // 查詢使用者所有評論數 .countDocuments
+  const scoresCnt = await Score.countDocuments({ user: req.user._id })
   res.status(StatusCodes.OK).json({
     success: true,
     message: '',
@@ -74,6 +77,8 @@ export const profile = async (req, res) => {
       name: req.user.name,
       permission: req.user.permission,
       id: req.user._id,
+      scorescnt: scoresCnt,
+      createdAt: req.user.createdAt,
     },
   })
 }

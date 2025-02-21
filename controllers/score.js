@@ -90,6 +90,40 @@ export const getuser = async (req, res) => {
   }
 }
 
+export const getuserall = async (req, res) => {
+  const getData = req.method === 'POST' ? req.body : req.query
+  console.log('getuserallDATA:', getData, req.params)
+  try {
+    if (!validator.isMongoId(req.params.userid)) throw new Error('ID')
+    const result = await Score.findOne({
+      user: req.params.userid,
+    }).orFail(new Error('NOT FOUND'))
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: '',
+      result,
+    })
+  } catch (error) {
+    console.log(error)
+    if (error.name === 'CastError' || error.message === 'ID') {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'ID格式不符',
+      })
+    } else if (error.message === 'NOT FOUND') {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: '',
+      })
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: 'serverError',
+      })
+    }
+  }
+}
+
 export const getstore = async (req, res) => {
   try {
     // const getData = req.method === 'POST' ? req.body : req.query
