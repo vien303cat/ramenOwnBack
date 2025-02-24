@@ -8,12 +8,16 @@ const router = Router()
 router.post('/', auth.jwt, upload, score.create)
 // // 所有評價
 router.get('/all', auth.jwt, auth.admin, score.getAll)
+// // 首頁取評價圖片+ID
+router.get('/allScoresSimple', score.allscoressimple)
 // // 單店家評價
 router.get('/getstore/:storeid', score.getstore)
 // // 單店家單會員評價
 router.get('/getuser/:storeid/:userid', auth.jwt, score.getuser)
 // // 單會員所有評價
 router.get('/getuserall/:userid', auth.jwt, score.getuserall)
+// // 單會員最新評價
+router.get('/getusernew/:userid', auth.jwt, score.getusernew)
 // // 更改評價
 router.patch('/:id', auth.jwt, upload, score.edit)
 // // 刪除評價
