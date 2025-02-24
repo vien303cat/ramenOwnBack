@@ -95,9 +95,11 @@ export const getuserall = async (req, res) => {
   console.log('getuserallDATA:', getData, req.params)
   try {
     if (!validator.isMongoId(req.params.userid)) throw new Error('ID')
-    const result = await Score.findOne({
+    const result = await Score.find({
       user: req.params.userid,
-    }).orFail(new Error('NOT FOUND'))
+    })
+      .populate('store', ['name', 'image', 'adress'])
+      .orFail(new Error('NOT FOUND'))
     res.status(StatusCodes.OK).json({
       success: true,
       message: '',
@@ -130,7 +132,10 @@ export const getstore = async (req, res) => {
     console.log('getstoreDATA:', req.params)
     if (!validator.isMongoId(req.params.storeid)) throw new Error('ID')
 
-    const result = await Score.find({ store: req.params.storeid }).populate('user', ['name'])
+    const result = await Score.find({ store: req.params.storeid, ishidden: false }).populate(
+      'user',
+      ['name'],
+    )
     console.log('DATA:', result)
 
     res.status(StatusCodes.OK).json({
