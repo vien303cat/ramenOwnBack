@@ -5,6 +5,7 @@ import validator from 'validator'
 export const create = async (req, res) => {
   try {
     req.body.image = req.file?.path || ''
+    req.body.sort = Number(req.body.sort)
     const result = await Store.create(req.body)
 
     res.status(StatusCodes.OK).json({
@@ -77,6 +78,11 @@ export const get = async (req, res) => {
           },
         },
       },
+      {
+        $sort: {
+          sort: -1,
+        },
+      },
     ])
     res.status(StatusCodes.OK).json({
       success: true,
@@ -142,8 +148,9 @@ export const getId = async (req, res) => {
 export const edit = async (req, res) => {
   try {
     if (!validator.isMongoId(req.params.id)) throw new Error('ID')
-
+    console.log('req.body:', req.body)
     req.body.image = req.file?.path
+    req.body.sort = Number(req.body.sort)
     const result = await Store.findByIdAndUpdate(req.params.id, req.body, {
       runValidators: true,
       new: true,
