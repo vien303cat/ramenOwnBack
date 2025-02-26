@@ -1,6 +1,7 @@
 import Score from '../models/score.js'
 import { StatusCodes } from 'http-status-codes'
 import validator from 'validator'
+import mongoose from 'mongoose'
 
 export const create = async (req, res) => {
   try {
@@ -188,35 +189,58 @@ export const getstore = async (req, res) => {
     // console.log('getstoreDATA:', req.params)
     if (!validator.isMongoId(req.params.storeid)) throw new Error('ID')
 
-    const result = await Score.find({ store: req.params.storeid, ishidden: false }).populate(
-      'user',
-      ['name'],
-    )
+    // const result = await Score.find({ store: req.params.storeid, ishidden: false }).populate(
+    //   'user',
+    //   ['name'],
+    // )
 
-    // const result = await Score.aggregate([
-    //   {
-    //     $match: {
-    //       ishidden: false,
-    //       store: req.params.storeid,
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'scores',
-    //       foreignField: 'scores',
-    //       localField: 'user',
-    //       as: 'user',
-    //     },
-    //   },
-    //   { $unwind: '$user' },
-    //   {
-    //     $group: {
-    //       _id: '$user._id',
-    //       name: { $first: '$user.name' },
-    //       scores: { $sum: 1 }, // 計算該 user 在 Score 表內的紀錄數量
-    //     },
-    //   },
-    // ])
+    const result = await Score.aggregate([
+      {
+        $match: {
+          ishidden: false,
+          store: new mongoose.Types.ObjectId(req.params.storeid),
+        },
+      },
+      {
+        $lookup: {
+          from: 'scores',
+          localField: 'user',
+          foreignField: 'user',
+          as: 'userScores',
+        },
+      },
+      {
+        $addFields: {
+          userScoreCount: {
+            $size: '$userScores',
+          },
+        },
+      },
+      {
+        $unset: 'userScores',
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [
+            {
+              $project: {
+                name: 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        // 拆陣列讓他變成object更好處理
+        $unwind: {
+          path: '$user',
+        },
+      },
+    ])
     console.log('getstore result:', result)
 
     res.status(StatusCodes.OK).json({

@@ -45,10 +45,15 @@ export const get = async (req, res) => {
       },
       {
         $lookup: {
+          // 目標欄位
           localField: '_id',
+          // 目標表格
           from: 'scores',
+          // 我方拿去比對的欄位
           foreignField: 'store',
+          // 取完資料後的欄位名稱(自己命名)
           as: 'scores',
+          // 額外加工 project : 選要抓出的欄位 : 1是要抓出 0是不要抓出
           pipeline: [
             {
               $project: {
@@ -59,6 +64,7 @@ export const get = async (req, res) => {
         },
       },
       {
+        // 額外計算新增欄位 例如可以算總和sum 平均值avg 資料筆數size
         $addFields: {
           totalScore: {
             $sum: '$scores.star',
