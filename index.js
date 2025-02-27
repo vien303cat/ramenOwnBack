@@ -53,6 +53,24 @@ app.use((error, req, res, next) => {
   )
 })
 
+// 根目錄的get請求處理
+app.get('/', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>404</title>
+    </head>
+    <body>
+      <h1 style="text-align:center;">你在找拉麵嗎 厲害喔:3</h1>
+      <iframe width="100%" height="800" src="https://www.youtube.com/embed/VIDPlxBC5Xk?si=cuPI2LP8PmfOWUVa&amp;start=48" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </body>
+    </html>
+  `)
+})
+
 app.use('/user', routerUser)
 app.use('/store', routerStore)
 app.use('/score', routerScore)
